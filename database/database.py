@@ -35,6 +35,7 @@ chan.basic_consume(queue='ride_database', on_message_callback=receive_msg)
 
 chan.start_consuming()
 
+<<<<<<< HEAD
 """
 #			Using MongoDB 
 
@@ -83,3 +84,6 @@ channel.basic_consume(on_message_callback=dbCallback, queue='rideSharingQueue')
 channel.start_consuming()
 
 """
+=======
+
+>>>>>>> b6ba95376401c3dd3d41b5edeba40b243039d85b
