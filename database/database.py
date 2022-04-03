@@ -27,7 +27,7 @@ def receive_msg(ch, method, properties, body):
 
 
 # To make sure the consumer receives only one message at a time
-# Next message is received only after acking the previous one
+# next message is received only after acking the previous one
 chan.basic_qos(prefetch_count=1)
 
 # Define the queue consumption
