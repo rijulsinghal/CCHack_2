@@ -35,46 +35,51 @@ chan.basic_consume(queue='ride_database', on_message_callback=receive_msg)
 
 chan.start_consuming()
 
+"""
+#			Using MongoDB 
+
 #To connect with the pymongo library:
 
-# import json
-# import pika
-# import time
-# import os
-# import pymongo
+import json
+import pika
+import time
+import os
+import pymongo
 
-# time.sleep(30)
+time.sleep(30)
 
-# #channel for database
-# amqp_url = os.environ['AMQP_URL']
-# url_params = pika.URLParameters(amqp_url)
+#channel for database
+amqp_url = os.environ['AMQP_URL']
+url_params = pika.URLParameters(amqp_url)
 
-# # connect to rabbitmq
-# connection = pika.BlockingConnection(url_params)
-# chan = connection.channel()
+# connect to rabbitmq
+connection = pika.BlockingConnection(url_params)
+chan = connection.channel()
 
-# chan.queue_declare(queue='ride_database', durable=True)
+chan.queue_declare(queue='ride_database', durable=True)
 
-# #mongoDB connection
-# mongoClient = pymongo.MongoClient('mongodb://mongo:27017/')
-# myDB = mongoClient["rideDB"]
-# myCollection = myDB["consumer"]
-# cursor = myCollection.find()
-
-
-# print ("[*] Waiting for payload. To exit press CTRL+C")
-
-# def dbCallback(ch, method, properties, body):
-#     payload = json.loads(body)
-#     print("[x] Processing Request")
-#     # time.sleep(payload.get('time'))
-#     myCollection.insert_one(payload)
-#     #print name of the consumer from the database
-#     for document in cursor:
-#         print(document)
-#     ch.basic_ack(delivery_tag = method.delivery_tag)
+#mongoDB connection
+mongoClient = pymongo.MongoClient('mongodb://mongo:27017/')
+myDB = mongoClient["rideDB"]
+myCollection = myDB["consumer"]
+cursor = myCollection.find()
 
 
+print ("[*] Waiting for payload. To exit press CTRL+C")
 
-# channel.basic_consume(on_message_callback=dbCallback, queue='rideSharingQueue')
-# channel.start_consuming()
+def dbCallback(ch, method, properties, body):
+	payload = json.loads(body)
+	print("[x] Processing Request")
+	time.sleep(payload.get('time'))
+	myCollection.insert_one(payload)
+#print name of the consumer from the database
+	for document in cursor:
+		print(document)
+	ch.basic_ack(delivery_tag = method.delivery_tag)
+
+
+
+channel.basic_consume(on_message_callback=dbCallback, queue='rideSharingQueue')
+channel.start_consuming()
+
+"""
