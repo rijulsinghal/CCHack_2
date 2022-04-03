@@ -1,0 +1,88 @@
+version: "3.2"
+
+networks:
+  cc-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.75.0.0/24"
+
+services:
+  rabbit_mq:
+    image: rabbitmq:3.8-rc-management
+    container_name: rabbit_mq
+    ports:
+      - 5673:5673
+      - 15673:15673
+    volumes:
+      - rabbit_mqdata:/usr/share/rabbitmq/data
+    networks:
+      cc-net:
+        ipv4_address: 172.75.0.3
+
+  producer:
+    build: producer
+    depends_on:
+      - rabbit_mq
+    ports:
+      - 5005:5005
+    environment:
+      AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+    volumes:
+      - ./producer:/usr/src/app/producer
+    networks:
+      cc-net:
+        ipv4_address: 172.75.0.4
+
+  consumer1:
+    build: consumer
+    depends_on:
+      - rabbit_mq
+      - producer
+    environment:
+      AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+      CONSUMER_ID: "Consumer1"
+      SERVER_URL: "http://producer:5005/new_ride_matching_consumer"
+      RIDE_URL: "http://producer:5005/new_ride"
+    volumes:
+      - ./consumer:/usr/src/app/consumer
+    networks:
+      cc-net:
+        ipv4_address: 172.75.0.5
+    restart: on-failure
+
+  consumer2:
+    build: consumer
+    depends_on:
+      - rabbit_mq
+      - producer
+    environment:
+      AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+      CONSUMER_ID: "Consumer2"
+      SERVER_URL: "http://producer:5005/new_ride_matching_consumer"
+      RIDE_URL: "http://producer:5005/new_ride"
+    networks:
+      cc-net:
+        ipv4_address: 172.75.0.6
+    volumes:
+      - ./consumer:/usr/src/app/consumer
+
+  database:
+    build: database
+    depends_on:
+      - rabbit_mq
+      - producer
+    environment:
+      AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+    networks:
+      cc-net:
+        ipv4_address: 172.75.0.7
+    volumes:
+      - ./database:/usr/src/app/database
+
+volumes:
+  rabbit_mqdata:
+    driver: local
+
+
