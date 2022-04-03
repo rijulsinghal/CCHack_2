@@ -27,7 +27,7 @@ def receive_msg(ch, method, properties, body):
 
 
 # To make sure the consumer receives only one message at a time
-# next message is received only after acking the previous one
+# Next message is received only after acking the previous one
 chan.basic_qos(prefetch_count=1)
 
 # Define the queue consumption
@@ -35,4 +35,7 @@ chan.basic_consume(queue='ride_database', on_message_callback=receive_msg)
 
 chan.start_consuming()
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a5a6279f792168a9a663bcbbbc1752e2d6c43a86
