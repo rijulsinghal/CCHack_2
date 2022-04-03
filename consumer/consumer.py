@@ -18,9 +18,7 @@ print(server_url,type(server_url))
 dt={"consumerId":consumer_id}
 ride_data = {"consumerId":consumer_id,"taskId":1,"time":20,"pickup":"start","destination":"end","cost":50,"seats":3}
 requests.post(server_url, json = dt)
-#server_url = str(server_url)
-#r = requests.get(server_url)
-#print(r.text)
+
 print("Consumer")
 print("sleeping for 10 seconds")
 time.sleep(10)
