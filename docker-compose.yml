@@ -8,6 +8,19 @@ networks:
       config:
         - subnet: "172.75.0.0/24"
 
+# services:
+#   rabbit_mq:
+#     image: rabbitmq:3.8-rc-management
+#     container_name: rabbit_mq
+#     ports:
+#       - 5673:5673
+#       - 15673:15673
+#     volumes:
+#       - rabbit_mqdata:/usr/share/rabbitmq/data
+#     networks:
+#       cc-net:
+#         ipv4_address: 172.75.0.3
+
 services:
   rabbit_mq:
     image: rabbitmq:3.8-rc-management
@@ -20,6 +33,8 @@ services:
     networks:
       cc-net:
         ipv4_address: 172.75.0.3
+
+
 
   producer:
     build: producer
@@ -67,6 +82,23 @@ services:
         ipv4_address: 172.75.0.6
     volumes:
       - ./consumer:/usr/src/app/consumer
+
+  consumer3:
+    build: consumer
+    depends_on:
+      - rabbit_mq
+      - producer
+    environment:
+      AMQP_URL: "amqp://rabbit_mq?connection_attempts=10&retry_delay=10"
+      CONSUMER_ID: "Consumer3"
+      SERVER_URL: "http://producer:5005/new_ride_matching_consumer"
+      RIDE_URL: "http://producer:5005/new_ride"
+    networks:
+      cc-net:
+        ipv4_address: 172.75.0.8
+    volumes:
+      - ./consumer:/usr/src/app/consumer
+
 
   database:
     build: database
