@@ -8,19 +8,6 @@ networks:
       config:
         - subnet: "172.75.0.0/24"
 
-# services:
-#   rabbit_mq:
-#     image: rabbitmq:3.8-rc-management
-#     container_name: rabbit_mq
-#     ports:
-#       - 5673:5673
-#       - 15673:15673
-#     volumes:
-#       - rabbit_mqdata:/usr/share/rabbitmq/data
-#     networks:
-#       cc-net:
-#         ipv4_address: 172.75.0.3
-
 services:
   rabbit_mq:
     image: rabbitmq:3.8-rc-management

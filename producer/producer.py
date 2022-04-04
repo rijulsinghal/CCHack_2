@@ -66,18 +66,3 @@ def new_ride_matching_consumer():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5005)
-
-"""
-"consumerId":1,
-    "serverIp":"127.0.0.1",
-    "consumerIp":"127.0.0.1",
-    "name":"test"
-
-"consumerId":1,
-    "taskId":1,
-    "time":20,
-    "pickup":"start",
-    "destination":"end",
-    "cost":50,
-    "seats":3
-"""
